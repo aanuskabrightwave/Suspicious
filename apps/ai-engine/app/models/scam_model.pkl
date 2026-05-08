@@ -1,0 +1,83 @@
+# AYUSH WORK AREA
+# Placeholder scam model file (serialized pickle)
+# Contains structure expected by ScamClassifier for text-based scam detection
+# Will be replaced with real trained model after training
+
+import pickle
+import numpy as np
+from sklearn.svm import SVC
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import LabelEncoder
+import datetime
+
+def create_placeholder_scam_model():
+    """
+    Creates a placeholder scam model with the exact structure
+    expected by ScamClassifier.load_model()
+    
+    This allows the application to start without crashing while
+    real models are being trained.
+    """
+    # Create dummy components that match expected types
+    tfidf = TfidfVectorizer(
+        max_features=500,
+        ngram_range=(1, 3),
+        min_df=2,
+        max_df=0.8,
+        sublinear_tf=True
+    )
+    
+    # Create a simple SVC classifier (same as in ScamClassifier)
+    classifier = SVC(
+        kernel='rbf',
+        C=10.0,
+        gamma='scale',
+        probability=True,
+        class_weight='balanced',
+        random_state=42
+    )
+    
+    # Create pipeline (same structure as in ScamClassifier)
+    pipeline = Pipeline([
+        ('tfidf', tfidf),
+        ('classifier', classifier)
+    ])
+    
+    # Dummy label encoder (matches ScamClassifier.label_encoder)
+    label_encoder = LabelEncoder()
+    categories = [
+        'banking_scam',
+        'investment_scam',
+        'prize_scam',
+        'verification_scam',
+        'urgent_action',
+        'qr_phishing',
+        'safe'
+    ]
+    label_encoder.fit(categories)
+    
+    # Create placeholder data
+    placeholder_data = {
+        'model': pipeline,
+        'vectorizer': tfidf,
+        'label_encoder': label_encoder,
+        'categories': categories,
+        'trained_at': datetime.datetime.utcnow().isoformat(),
+        'version': '1.0.0-placeholder',
+        'description': 'Placeholder scam model for development. Replace with trained model.'
+    }
+    
+    return placeholder_data
+
+# Generate and save the placeholder model
+if __name__ == "__main__":
+    model_data = create_placeholder_scam_model()
+    
+    # Save to file
+    with open('scam_model.pkl', 'wb') as f:
+        pickle.dump(model_data, f)
+    
+    print("Placeholder scam model created successfully")
+    print(f"Model version: {model_data['version']}")
+    print(f"Trained at: {model_data['trained_at']}")

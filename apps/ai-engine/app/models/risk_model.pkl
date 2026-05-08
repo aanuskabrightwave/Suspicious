@@ -1,0 +1,85 @@
+# AYUSH WORK AREA
+# Placeholder risk model file (serialized pickle)
+# Contains structure expected by RiskClassifier for unified risk scoring
+# Will be replaced with ensemble model after training
+
+import pickle
+import numpy as np
+from sklearn.ensemble import VotingClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import Pipeline
+import datetime
+
+def create_placeholder_risk_model():
+    """
+    Creates a placeholder risk model with the structure expected
+    by RiskClassifier.get_risk_classifier()
+    
+    This model combines multiple classifiers in a voting ensemble
+    to provide unified risk scoring.
+    """
+    # Create dummy components for each sub-classifier
+    # Note: In production, this would be a trained ensemble
+    
+    # Dummy scalers
+    scaler1 = StandardScaler()
+    scaler2 = StandardScaler()
+    
+    # Dummy classifiers (matching expected types)
+    clf1 = LogisticRegression(random_state=42, max_iter=1000)
+    clf2 = SVC(kernel='rbf', probability=True, random_state=42)
+    clf3 = SVC(kernel='linear', probability=True, random_state=42)
+    
+    # Create voting classifier (simulating ensemble)
+    voting_clf = VotingClassifier(
+        estimators=[
+            ('lr', Pipeline([('scaler', scaler1), ('clf', clf1)])),
+            ('svc_rbf', Pipeline([('scaler', scaler2), ('clf', clf2)])),
+            ('svc_linear', Pipeline([('scaler', scaler1), ('clf', clf3)]))
+        ],
+        voting='soft',
+        weights=[1, 1, 1]
+    )
+    
+    # Risk level thresholds (matches RiskClassifier.RISK_THRESHOLDS)
+    risk_thresholds = {
+        'SAFE': 0.2,
+        'LOW': 0.4,
+        'MEDIUM': ведите 0.6,
+        'HIGH': 0.8,
+        'CRITICAL': 0.9
+    }
+    
+    # Category weights (matches RiskClassifier.CATEGORY_WEIGHTS)
+    category_weights = {
+        'phishing': 0.4,
+        'scam': 0.35,
+        'fraud': 0.25
+    }
+    
+    # Create placeholder data
+    placeholder_data = {
+        'model': voting_clf,
+        'scalers': [scaler1, scaler2],
+        'risk_thresholds': risk_thresholds,
+        'category_weights': category_weights,
+        'trained_at': datetime.datetime.utcnow().isoformat(),
+        'version': '1.0.0-placeholder',
+        'description': 'Placeholder risk model for development. Replace with trained ensemble model.'
+    }
+    
+    return placeholder_data
+
+# Generate and save the placeholder model
+if __name__ == "__main__":
+    model_data = create_placeholder_risk_model()
+    
+    # Save to file
+    with open('risk_model.pkl', 'wb') as f:
+        pickle.dump(model_data, f)
+    
+    print("Placeholder risk model created successfully")
+    print(f"Model version: {model_data['version']}")
+    print(f"Trained at: {model_data['trained_at']}")
