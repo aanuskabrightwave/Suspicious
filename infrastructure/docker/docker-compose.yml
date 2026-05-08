@@ -1,0 +1,48 @@
+version: '3.8'
+
+# ======================================
+# DEVOPS WORK AREA
+# Full stack orchestration for local development
+# Manages networking and volumes for all apps
+# ======================================
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: ${DB_USER:-admin}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password123}
+      POSTGRES_DB: cyber_shield_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  backend-api:
+    build:
+      context: ../../apps/backend-api
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      DATABASE_URL: postgresql://admin:password123@postgres:5432/cyber_shield_db?schema=public
+      AI_ENGINE_URL: http://ai-engine:8000
+      JWT_SECRET: dev_secret
+
+  ai-engine:
+    build:
+      context: ../../apps/ai-engine
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+
+volumes:
+  pgdata:

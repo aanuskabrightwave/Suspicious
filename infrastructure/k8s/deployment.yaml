@@ -1,0 +1,30 @@
+# ======================================
+# DEVOPS WORK AREA
+# Kubernetes Deployment Starter
+# Add Services, Ingress, and ConfigMaps
+# ======================================
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-api
+  labels:
+    app: backend-api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: backend-api
+  template:
+    metadata:
+      labels:
+        app: backend-api
+    spec:
+      containers:
+      - name: backend-api
+        image: your-registry.com/cyber-shield/backend-api:latest
+        ports:
+        - containerPort: 5000
+        envFrom:
+        - secretRef:
+            name: backend-secrets

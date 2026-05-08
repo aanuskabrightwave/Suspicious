@@ -1,0 +1,64 @@
+services:
+  # Node.js Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    env_file: .env
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - sentinel_network
+
+  # Python AI Detection Engine
+  ai-engine:
+    build:
+      context: ./ai-engine
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    env_file: .env
+    networks:
+      - sentinel_network
+
+  # React Admin Dashboard
+  dashboard:
+    build:
+      context: ./admin-dashboard
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    networks:
+      - sentinel_network
+
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: ${DB_USER:-admin}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password123}
+      POSTGRES_DB: sentinel_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - sentinel_network
+
+  # Redis for Caching and Job Queues
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - sentinel_network
+
+networks:
+  sentinel_network:
+    driver: bridge
+
+volumes:
+  postgres_data:

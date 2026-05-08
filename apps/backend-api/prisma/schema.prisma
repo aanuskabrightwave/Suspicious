@@ -1,0 +1,58 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ======================================
+// SHIVAM WORK AREA
+// Add database logic here
+// Extend the User and Threat models as required
+// Run `npx prisma db push` or `npx prisma migrate dev`
+// ======================================
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  scans     Scan[]
+  devices   Device[]
+}
+
+model Device {
+  id        String   @id @default(uuid())
+  fcmToken  String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Scan {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  type        ScanType
+  targetUrl   String?
+  targetApk   String?
+  riskLevel   RiskLevel
+  aiScore     Float
+  createdAt   DateTime @default(now())
+}
+
+enum ScanType {
+  URL
+  QR
+  APK
+  FILE
+}
+
+enum RiskLevel {
+  SAFE
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}

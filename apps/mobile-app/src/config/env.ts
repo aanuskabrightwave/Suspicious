@@ -1,0 +1,1 @@
+export const ENV = { API_URL: 'localhost:5000' };

@@ -1,0 +1,49 @@
+name: Cyber Shield CI/CD
+
+# ======================================
+# DEVOPS WORK AREA
+# GitHub Actions Pipeline
+# Setup secrets in GitHub Repo Settings
+# ======================================
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'
+
+    - name: Install Backend Dependencies
+      run: |
+        cd apps/backend-api
+        npm install
+
+    # - name: Run Backend Tests
+    #   run: |
+    #     cd apps/backend-api
+    #     npm test
+
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install AI Engine Dependencies
+      run: |
+        cd apps/ai-engine
+        pip install -r requirements.txt
+
+    # - name: Run AI Engine Tests
+    #   run: |
+    #     cd apps/ai-engine
+    #     pytest
