@@ -1,32 +1,35 @@
-import React from 'react';
-import { createStackNavigator } from '@react-navigation/stack';
-import DashboardScreen from '../screens/DashboardScreen';
-import QRScannerScreen from '../screens/QRScannerScreen';
-// import LoginScreen from '../screens/LoginScreen';
-
-const Stack = createStackNavigator();
-
-// ======================================
 // ANUSKA WORK AREA
-// Build UI navigation logic here
-// Add authentication guard (LoginScreen) if token is missing
-// Connect new screens (e.g., Settings, ThreatDetails)
-// ======================================
+/**
+ * apps/mobile-app/src/navigation/AppNavigator.tsx
+ */
+import React from 'react';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { LayoutDashboard, Scan, History, Settings } from 'lucide-react-native';
+import DashboardScreen from '../screens/dashboard/DashboardScreen';
+import URLScannerScreen from '../screens/scanner/URLScannerScreen';
+import SecuritySettingsScreen from '../screens/settings/SecuritySettingsScreen';
+
+const Tab = createBottomTabNavigator();
 
 export default function AppNavigator() {
   return (
-    <Stack.Navigator initialRouteName="Dashboard">
-      {/* <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} /> */}
-      <Stack.Screen 
-        name="Dashboard" 
-        component={DashboardScreen} 
-        options={{ title: 'Cyber Shield Dashboard' }} 
-      />
-      <Stack.Screen 
-        name="QRScanner" 
-        component={QRScannerScreen} 
-        options={{ title: 'Scan QR Code' }} 
-      />
-    </Stack.Navigator>
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ color, size }) => {
+          const icons = { Dashboard: LayoutDashboard, Scanner: Scan, History: History, Settings: Settings };
+          const Icon = icons[route.name as keyof typeof icons];
+          return <Icon color={color} size={size} />;
+        },
+        tabBarActiveTintColor: '#0ea5e9',
+        tabBarInactiveTintColor: '#64748b',
+        tabBarStyle: { backgroundColor: '#0f172a', borderTopWidth: 0 },
+        headerStyle: { backgroundColor: '#0f172a' },
+        headerTintColor: '#fff',
+      })}
+    >
+      <Tab.Screen name="Dashboard" component={DashboardScreen} />
+      <Tab.Screen name="Scanner" component={URLScannerScreen} options={{ title: 'AI Scan' }} />
+      <Tab.Screen name="Settings" component={SecuritySettingsScreen} />
+    </Tab.Navigator>
   );
 }

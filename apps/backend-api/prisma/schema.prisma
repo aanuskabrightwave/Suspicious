@@ -1,3 +1,5 @@
+// SHIVAM WORK AREA
+// apps/backend-api/prisma/schema.prisma
 generator client {
   provider = "prisma-client-js"
 }
@@ -7,46 +9,10 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// ======================================
-// SHIVAM WORK AREA
-// Add database logic here
-// Extend the User and Threat models as required
-// Run `npx prisma db push` or `npx prisma migrate dev`
-// ======================================
-
-model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  password  String
-  createdAt DateTime @default(now())
-  scans     Scan[]
-  devices   Device[]
-}
-
-model Device {
-  id        String   @id @default(uuid())
-  fcmToken  String?
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-}
-
-model Scan {
-  id          String   @id @default(uuid())
-  userId      String
-  user        User     @relation(fields: [userId], references: [id])
-  type        ScanType
-  targetUrl   String?
-  targetApk   String?
-  riskLevel   RiskLevel
-  aiScore     Float
-  createdAt   DateTime @default(now())
-}
-
-enum ScanType {
-  URL
-  QR
-  APK
-  FILE
+enum Role {
+  USER
+  ADMIN
+  SUPERADMIN
 }
 
 enum RiskLevel {
@@ -55,4 +21,72 @@ enum RiskLevel {
   MEDIUM
   HIGH
   CRITICAL
+}
+
+enum ScanType {
+  URL
+  QR
+  OCR
+  APK
+}
+
+model User {
+  id            String         @id @default(uuid())
+  email         String         @unique
+  password      String
+  name          String?
+  role          Role           @default(USER)
+  devices       Device[]
+  scans         Scan[]
+  alerts        FamilyAlert[]
+  threatLogs    ThreatLog[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+model Device {
+  id            String   @id @default(uuid())
+  name          String
+  os            String
+  fcmToken      String?
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  lastSync      DateTime @default(now())
+}
+
+model Scan {
+  id              String    @id @default(uuid())
+  target          String
+  type            ScanType
+  riskScore       Int?
+  riskLevel       RiskLevel @default(SAFE)
+  confidence      Float?
+  explanation     String?
+  rawAiResponse   Json?
+  userId          String
+  user            User      @relation(fields: [userId], references: [id])
+  isProcessed     Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model ThreatLog {
+  id          String    @id @default(uuid())
+  threatType  String
+  severity    RiskLevel
+  details     String
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  timestamp   DateTime  @default(now())
+}
+
+model FamilyAlert {
+  id          String    @id @default(uuid())
+  title       String
+  message     String
+  riskLevel   RiskLevel
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  isRead      Boolean   @default(false)
+  timestamp   DateTime  @default(now())
 }

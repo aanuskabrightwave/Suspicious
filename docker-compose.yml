@@ -2,11 +2,13 @@ services:
   # Node.js Backend API
   backend:
     build:
-      context: ./backend
+      context: ./apps/backend-api
       dockerfile: Dockerfile
     ports:
-      - "5000:5000"
+      - "3000:3000"
     env_file: .env
+    environment:
+      - ENVIRONMENT=development
     depends_on:
       - postgres
       - redis
@@ -16,21 +18,23 @@ services:
   # Python AI Detection Engine
   ai-engine:
     build:
-      context: ./ai-engine
+      context: ./apps/ai-engine
       dockerfile: Dockerfile
     ports:
-      - "8000:8000"
+      - "8001:8001"
     env_file: .env
+    environment:
+      - ENVIRONMENT=development
     networks:
       - sentinel_network
 
   # React Admin Dashboard
   dashboard:
     build:
-      context: ./admin-dashboard
+      context: ./apps/admin-dashboard
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "3001:3001"
     networks:
       - sentinel_network
 

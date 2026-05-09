@@ -152,10 +152,6 @@ class PhishingDetectionService:
             # Generate explanation
             explanation = self._generate_heuristic_explanation(risk_score, category, domain_result, keyword_result)
             
-            # Calculate confidence (higher when multiple indicators agree)
-            confidence = min(
-                len(domain_result.get("indicators", [])) * 0.2 +
-
             # More sophisticated confidence calculation
             indicator_count = (
                 len(domain_result.get("indicators", [])) +

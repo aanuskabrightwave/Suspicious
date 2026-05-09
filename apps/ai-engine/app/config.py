@@ -21,7 +21,7 @@ class Settings(BaseSettings):
     # Application settings
     DEBUG: bool = Field(default=False, description="Enable debug mode")
     HOST: str = Field(default="0.0.0.0", description="Host to bind the application")
-    PORT: int = Field(default=8001, description="Port to run the application")
+    PORT: int = Field(default=8001, alias="PORT_AI", description="Port to run the application")
     
     # Security settings
     SECRET_KEY: str = Field(
