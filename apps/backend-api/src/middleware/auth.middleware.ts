@@ -3,6 +3,7 @@ import { JwtUtil } from '../utils/jwt.util';
 import { AuthRepository } from '../repositories/auth.repository';
 import { AppError } from '../utils/AppError';
 import { AuthenticatedRequest } from '../controllers/auth.controller';
+import { env } from '../config/env';
 
 const authRepository = new AuthRepository();
 
@@ -29,7 +30,7 @@ export const authenticate = async (
     }
 
     // 3. Isolate the raw token string
-    const token = authHeader.split(' ')[1];
+    const token = authHeader.split(' ')[1]?.trim();
 
     if (!token) {
       return next(new AppError(401, 'Authentication required. Token is malformed.'));
@@ -52,6 +53,8 @@ export const authenticate = async (
     req.user = {
       id: user.id,
       email: user.email,
+      name: user.name,
+      createdAt: user.createdAt,
     };
 
     // 7. Pass control to the next middleware/controller

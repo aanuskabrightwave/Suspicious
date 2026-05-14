@@ -22,6 +22,8 @@ export interface TokenPayload {
 export interface AuthUser {
   id: string;
   email: string;
+  name: string | null;
+  createdAt: Date;
 }
 
 // 3. Response Structures

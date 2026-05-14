@@ -1,7 +1,13 @@
+import path from 'path';
 import dotenv from 'dotenv';
 
 // Load environment variables from .env file
-dotenv.config();
+// We use path.resolve to ensure the .env is loaded relative to this file's location,
+// and set override: true to ensure local .env values take precedence over shell env.
+dotenv.config({ 
+  path: path.resolve(__dirname, '../../.env'),
+  override: true 
+});
 
 // Define the expected structure of our environment variables
 interface EnvConfig {

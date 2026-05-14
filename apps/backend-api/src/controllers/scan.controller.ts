@@ -1,38 +1,46 @@
-import { Request, Response } from 'express';
-// import { aiService } from '../services/ai.service';
-// import { prisma } from '../index';
+import { Response } from 'express';
+import { ScanService } from '../services/scan.service';
+import { catchAsync } from '../utils/catchAsync';
+import { ScanUrlDto } from '../types/scan.types';
+import { AuthenticatedRequest } from './auth.controller';
 
-// ======================================
-// SHIVAM WORK AREA
-// Build backend validation here
-// Add database logic here to save scan history
-// Integrate with Ayush's AI service via REST or Redis Queues
-// ======================================
+export class ScanController {
+  private scanService: ScanService;
 
-export const scanUrl = async (req: Request, res: Response) => {
-  try {
-    const { url } = req.body;
-    if (!url) return res.status(400).json({ error: 'URL is required' });
-
-    // 1. Check local DB for known threats (cache)
-    
-    // 2. Forward to AI Engine if unknown
-    // const aiResult = await aiService.analyzeUrl(url);
-
-    // Mock response for now
-    const aiResult = {
-      riskLevel: 'HIGH',
-      aiScore: 0.89,
-      threatType: 'PHISHING',
-      details: 'Suspicious domain age and homograph attack detected.'
-    };
-
-    // 3. Save to DB using Prisma
-    // await prisma.scan.create({ ... })
-
-    res.status(200).json(aiResult);
-  } catch (error) {
-    console.error('Scan Error:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+  constructor() {
+    this.scanService = new ScanService();
   }
-};
+
+  /**
+   * POST /api/v1/scan/url
+   * Processes a URL and saves the result to the user's history.
+   */
+  public scanUrl = catchAsync(async (req: AuthenticatedRequest, res: Response) => {
+    const data: ScanUrlDto = req.body;
+    const userId = req.user!.id; // Middleware guarantees req.user exists
+
+    const result = await this.scanService.analyzeUrl(data, userId);
+
+    res.status(200).json({
+      success: true,
+      message: 'URL scan completed and saved',
+      data: result,
+    });
+  });
+
+  /**
+   * GET /api/v1/scan/history
+   * Fetches the authenticated user's personal scan history.
+   */
+  public getHistory = catchAsync(async (req: AuthenticatedRequest, res: Response) => {
+    const userId = req.user!.id;
+
+    const history = await this.scanService.getHistory(userId);
+
+    res.status(200).json({
+      success: true,
+      message: 'Scan history fetched successfully',
+      data: history,
+    });
+  });
+}
