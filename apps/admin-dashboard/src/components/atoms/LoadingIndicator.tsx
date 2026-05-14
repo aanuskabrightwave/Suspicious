@@ -1,7 +1,7 @@
 // ADMIN DASHBOARD - Antigravity
 // TODO: Use Lottie for more complex AI "thinking" animations
 
-/**
+/*
  * apps/admin-dashboard/src/components/atoms/LoadingIndicator.tsx
  */
 import React, { useEffect } from 'react';

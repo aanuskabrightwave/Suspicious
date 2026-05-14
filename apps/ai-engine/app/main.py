@@ -49,6 +49,20 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/")
+async def root() -> Dict[str, Any]:
+    """Root endpoint to verify service is running and provide entry points"""
+    return {
+        "message": "SentinelAI Engine is active and protecting your digital space",
+        "version": "1.0.0",
+        "endpoints": {
+            "health": "/health",
+            "docs": "/docs",
+            "redoc": "/redoc"
+        },
+        "author": "Ayush"
+    }
+
 @app.get("/health")
 async def health_check() -> Dict[str, str]:
     """Health check endpoint for monitoring"""
