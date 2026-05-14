@@ -1,11 +1,6 @@
 {
-  "name": "cyber-shield-monorepo",
-  "version": "1.0.0",
+  "name": "suspicious-monorepo",
   "private": true,
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
@@ -15,7 +10,13 @@
   },
   "devDependencies": {
     "prettier": "^3.0.3",
-    "tailwindcss": "3.3.2",
     "turbo": "latest"
-  }
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
 }

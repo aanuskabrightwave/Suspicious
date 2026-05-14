@@ -1,12 +1,9 @@
-// SHIVAM WORK AREA
-/**
- * apps/backend-api/src/queues/scanQueue.ts
- */
+// apps/backend-api/src/queues/scanQueue.ts
 import { Queue } from 'bullmq';
-import { redis } from '../config/redis';
+import { getRedisClient } from '../config/redis';
 
 export const scanQueue = new Queue('ScanQueue', {
-  connection: redis,
+  connection: getRedisClient(),
   defaultJobOptions: {
     attempts: 3,
     backoff: {
@@ -15,3 +12,7 @@ export const scanQueue = new Queue('ScanQueue', {
     },
   },
 });
+
+export async function closeScanQueue(): Promise<void> {
+  await scanQueue.close();
+}
